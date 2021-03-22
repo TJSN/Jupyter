@@ -1,0 +1,206 @@
+# Basic Libraries
+import numpy as np
+import pandas as pd
+import seaborn as sb
+import matplotlib.pyplot as plt 
+sb.set()
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import confusion_matrix
+from sklearn.tree import export_graphviz
+import graphviz
+
+
+
+//Plots
+
+f, axes = plt.subplots(4, 3, figsize=(18, 24))
+colors = ["r", "g", "b", "m", "c", "y"]
+
+count = 0
+for var in quizData:
+    sb.boxplot(quizData[var], orient = "h", color = colors[count], ax = axes[count,0])
+    sb.distplot(quizData[var], color = colors[count], ax = axes[count,1])
+    sb.violinplot(quizData[var], color = colors[count], ax = axes[count,2])
+    count += 1
+    
+    
+    
+//Outliers
+Q1 = quizData.quantile(0.25)
+Q3 = quizData.quantile(0.75)
+IQR = Q3 - Q1
+((quizData < (Q1 - 1.5 * IQR)) | (quizData > (Q3 + 1.5 * IQR))).sum()
+
+
+
+
+quizData.describe(include=np.object)
+
+
+banknote=quizData['Banknote'].value_counts()
+print(banknote)
+sb.catplot(y = "Banknote", data = quizData, kind = "count")
+
+
+
+
+print('Genuine : Forged')
+print(banknote[0],'\t:',banknote[1])
+
+
+
+
+// Swarmplot
+
+f, axes = plt.subplots(4, 1, figsize=(16,14))
+sb.swarmplot(x = 'Variance', y = 'Banknote', data = quizData, ax = axes[0])
+sb.swarmplot(x = 'Skewness', y = 'Banknote', data = quizData, ax = axes[1])
+sb.swarmplot(x = 'Kurtosis', y = 'Banknote', data = quizData, ax = axes[2])
+sb.swarmplot(x = 'Entropy', y = 'Banknote', data = quizData, ax = axes[3])
+
+
+
+
+// Decision Tree
+
+# Recall the Dataset
+banknote = pd.DataFrame(quizData['Banknote'])   # Response
+variance = pd.DataFrame(quizData['Variance'])       # Predictor
+
+# Split the Legendary-Total Dataset into Train and Test
+X_train, X_test, y_train, y_test = train_test_split(variance, banknote, test_size = 0.2)
+
+# Decision Tree using Train Data
+dectree = DecisionTreeClassifier(max_depth = 2)  # create the decision tree object
+dectree.fit(X_train, y_train)                    # train the decision tree model
+
+# Predict Legendary values corresponding to Total
+y_train_pred = dectree.predict(X_train)
+y_test_pred = dectree.predict(X_test)
+
+# Check the Goodness of Fit (on Train Data)
+print("Goodness of Fit of Model \tTrain Dataset")
+print("Classification Accuracy \t:", dectree.score(X_train, y_train))
+print()
+
+# Check the Goodness of Fit (on Test Data)
+print("Goodness of Fit of Model \tTest Dataset")
+print("Classification Accuracy \t:", dectree.score(X_test, y_test))
+print()
+
+# Plot the Confusion Matrix for Train and Test
+f, axes = plt.subplots(1, 2, figsize=(12, 4))
+sb.heatmap(confusion_matrix(y_train, y_train_pred),
+           annot = True, fmt=".0f", annot_kws={"size": 18}, ax = axes[0])
+sb.heatmap(confusion_matrix(y_test, y_test_pred), 
+           annot = True, fmt=".0f", annot_kws={"size": 18}, ax = axes[1])
+
+# Plot the Decision Tree
+treedot = export_graphviz(dectree,                                      # the model
+                          feature_names = X_train.columns,              # the features 
+                          out_file = None,                              # output file
+                          filled = True,                                # node colors
+                          rounded = True,                               # make pretty
+                          special_characters = True)                    # postscript
+
+graphviz.Source(treedot)
+
+
+
+
+
+# Extract Response and Predictors
+y = pd.DataFrame(quizData['Banknote'])
+X = pd.DataFrame(quizData[["Variance", "Skewness", "Kurtosis", "Entropy"]]) 
+
+# Split the Dataset into Train and Test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2)
+
+# Decision Tree using Train Data
+dectree = DecisionTreeClassifier(max_depth = 2)  # create the decision tree object
+dectree.fit(X_train, y_train)                    # train the decision tree model
+
+# Predict Response corresponding to Predictors
+y_train_pred = dectree.predict(X_train)
+y_test_pred = dectree.predict(X_test)
+
+# Check the Goodness of Fit (on Train Data)
+print("Goodness of Fit of Model \tTrain Dataset")
+print("Classification Accuracy \t:", dectree.score(X_train, y_train))
+print()
+
+# Check the Goodness of Fit (on Test Data)
+print("Goodness of Fit of Model \tTest Dataset")
+print("Classification Accuracy \t:", dectree.score(X_test, y_test))
+print()
+
+# Plot the Confusion Matrix for Train and Test
+f, axes = plt.subplots(1, 2, figsize=(12, 4))
+sb.heatmap(confusion_matrix(y_train, y_train_pred),
+           annot = True, fmt=".0f", annot_kws={"size": 18}, ax = axes[0])
+sb.heatmap(confusion_matrix(y_test, y_test_pred), 
+           annot = True, fmt=".0f", annot_kws={"size": 18}, ax = axes[1])
+
+# Plot the Decision Tree
+treedot = export_graphviz(dectree,                                      # the model
+                          feature_names = X_train.columns,              # the features 
+                          out_file = None,                              # output file
+                          filled = True,                                # node colors
+                          rounded = True,                               # make pretty
+                          special_characters = True)                    # postscript
+
+graphviz.Source(treedot)
+
+
+
+
+
+//Confusion Matrix
+
+def calculaterates(matrix):
+    TN = matrix[0][0]
+    FP = matrix[0][1]
+    FN = matrix[1][0]
+    TP = matrix[1][1]
+    # Sensitivity, hit rate, recall, or true positive rate
+    TPR = TP/(TP+FN)
+    # Specificity or true negative rate
+    TNR = TN/(TN+FP)
+    # Fall out or false positive rate
+    FPR = FP/(FP+TN)
+    # False negative rate
+    FNR = FN/(TP+FN)
+    return TPR,TNR,FPR,FNR
+FPR_train,FNR_train = calculaterates(confusion_matrix(y_train,y_train_pred))
+print("Train Data:")
+print("FPR: ",FPR_train)
+print("FNR: ",FNR_train)
+
+print("\n")
+
+FPR_test,FNR_test = calculaterates(confusion_matrix(y_test,y_test_pred))
+print("Test Data:")
+print("FPR: ",FPR_test)
+print("FNR: ",FNR_test)
+
+
+
+//FN/FP/TN/TP Cases
+
+pred=y_train_pred.reshape(800,1)
+print('False Negative cases:')
+(y_train == 1) & (pred == 0)
+
+
+//predict datapoints
+
+datapoints={(-4.9447, 3.3005, 1.063, -1.444),
+(0.94225, 5.8561, 1.8762, -0.32544),
+(2.2429, -4.1427, 5.2333, -0.40173),
+(0.53936, 3.8944, -4.8166, -4.3418),
+(-2.5724, -0.95602, 2.7073, -0.16639)}
+dp= pd.DataFrame(datapoints)
+print(dectree.predict(dp, check_input=True))
