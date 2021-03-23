@@ -190,7 +190,7 @@ print("FNR: ",FNR_test)
 
 //FN/FP/TN/TP Cases
 
-pred=y_train_pred.reshape(800,1)
+y_train_pred.reshape(800,1)
 print('False Negative cases:')
 (y_train == 1) & (pred == 0)
 
