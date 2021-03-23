@@ -1,0 +1,26 @@
+# Check the individual statistical description and visualize the statistical distributions of each of these variables.
+f, axes = plt.subplots(2, 3, figsize=(18, 18))
+colors = ["r", "g", "b", "m", "c"]
+
+count = 0
+for var in pkmndata:
+    sb.boxplot(pkmndata[var], orient = "h", color = colors[count], ax = axes[count,0])
+    sb.distplot(pkmndata[var], color = colors[count], ax = axes[count,1])
+    sb.violinplot(pkmndata[var], color = colors[count], ax = axes[count,2])
+    count += 1
+    
+    
+    
+    
+    # Check the relationship amongst the variables using mutual jointplots and an overall pairplot.
+# Create mutual jointplots.
+for column in houseNumData.columns:
+    sb.jointplot(x=houseNumData['SalePrice'],y=houseNumData[column],height = 8)
+    sb.jointplot(x=houseNumData['GrLivArea'],y=houseNumData[column],height = 8)
+    sb.jointplot(x=houseNumData['TotalBsmtSF'],y=houseNumData[column],height = 8)
+    sb.jointplot(x=houseNumData['GarageArea'],y=houseNumData[column],height = 8)
+    
+    
+    
+    # Create overall pairplot.
+sb.pairplot(houseNumData)
